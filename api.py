@@ -87,7 +87,6 @@ async def confirm_auth(
     first_name: str,
     last_name: str,
     username: str,
-    photo_url: str,
 ) -> int:
     """
     Send auth confirmation to Django backend (bot-link flow).
@@ -100,7 +99,6 @@ async def confirm_auth(
         "first_name": first_name,
         "last_name": last_name,
         "username": username,
-        "photo_url": photo_url,
     }
 
     try:
@@ -119,7 +117,6 @@ async def issue_code(
     first_name: str,
     last_name: str,
     username: str,
-    photo_url: str,
 ) -> tuple[int, str | None]:
     """
     Ask Django to mint a 6-digit login code for this Telegram user.
@@ -138,7 +135,6 @@ async def issue_code(
         "first_name": first_name,
         "last_name": last_name,
         "username": username,
-        "photo_url": photo_url,
     }
 
     try:

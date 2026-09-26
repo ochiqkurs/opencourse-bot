@@ -36,36 +36,17 @@ MSG_HELP = (
 )
 
 
-async def _get_photo_url(update: Update, context: ContextTypes.DEFAULT_TYPE) -> str:
-    """Return the first profile photo URL, or empty string if unavailable."""
-    try:
-        user = update.effective_user
-        if not user:
-            return ""
-        photos = await user.get_profile_photos(limit=1)
-        if not photos.photos:
-            return ""
-        file_id = photos.photos[0][-1].file_id  # highest resolution
-        file = await context.bot.get_file(file_id)
-        return file.file_path if file.file_path.startswith("http") else ""
-    except Exception as exc:
-        logger.warning("Could not fetch profile photo: %s", exc)
-        return ""
-
-
 async def _confirm_and_reply(
     update: Update, context: ContextTypes.DEFAULT_TYPE, token: str
 ) -> None:
     """Confirm a deep-link token with Django and reply based on the result."""
     user = update.effective_user
-    photo_url = await _get_photo_url(update, context)
     status = await confirm_auth(
         token=token,
         telegram_id=user.id,
         first_name=user.first_name or "",
         last_name=user.last_name or "",
         username=user.username or "",
-        photo_url=photo_url,
     )
     if status == 200:
         await update.message.reply_text(MSG_SUCCESS)
@@ -121,13 +102,11 @@ async def login_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         if not update.message:
             return
         user = update.effective_user
-        photo_url = await _get_photo_url(update, context)
         status, code = await issue_code(
             telegram_id=user.id,
             first_name=user.first_name or "",
             last_name=user.last_name or "",
             username=user.username or "",
-            photo_url=photo_url,
         )
         if status == 200 and code:
             pretty = _format_code(code)

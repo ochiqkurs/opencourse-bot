@@ -40,13 +40,13 @@ class _OKClient:
 def test_confirm_auth_network_error_returns_zero(monkeypatch):
     monkeypatch.setattr(api, "RETRY_BACKOFF_SECONDS", 0)
     monkeypatch.setattr(api.httpx, "AsyncClient", _FailingClient)
-    status = asyncio.run(api.confirm_auth("tok", 1, "f", "l", "u", ""))
+    status = asyncio.run(api.confirm_auth("tok", 1, "f", "l", "u"))
     assert status == 0
 
 
 def test_issue_code_success(monkeypatch):
     monkeypatch.setattr(api.httpx, "AsyncClient", _OKClient)
-    status, code = asyncio.run(api.issue_code(1, "f", "l", "u", ""))
+    status, code = asyncio.run(api.issue_code(1, "f", "l", "u"))
     assert status == 200
     assert code == "123456"
 
@@ -54,7 +54,7 @@ def test_issue_code_success(monkeypatch):
 def test_issue_code_network_error_returns_zero_none(monkeypatch):
     monkeypatch.setattr(api, "RETRY_BACKOFF_SECONDS", 0)
     monkeypatch.setattr(api.httpx, "AsyncClient", _FailingClient)
-    status, code = asyncio.run(api.issue_code(1, "f", "l", "u", ""))
+    status, code = asyncio.run(api.issue_code(1, "f", "l", "u"))
     assert status == 0
     assert code is None
 
